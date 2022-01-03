@@ -22,22 +22,22 @@ contract Lottery {
     _;
   }
 
-  function acceptToken(address from, uint amount) external {
+  function acceptToken(uint amount) external {
 
-    from = msg.sender;
+    address from = msg.sender;
     address to = address(this);
 
     // makes sure that the owner cannot participate in Lottery
-    require(msg.sender != owner);
+    require(from != owner);
     require(amount > 0, "Bet atleast 1 token");
 
     // transfer token from player to contract
     token.transferFrom(from, to, amount);
 
     // pushing the account conducting the transaction onto the players array as a payable address
-    players.push(payable(msg.sender));
+    players.push(payable(from));
 
-    // emit Transfer(from, to, amount);
+    emit Transfer(from, to, amount);
   }
 
   function getTokenBalanceOf(address addr) public view returns (uint) {
@@ -55,7 +55,7 @@ contract Lottery {
 
   function pickWinner() public onlyOwner {
     // makes sure that we have enough players in the lottery
-    require(players.length >= 3, "Not enough players in the lottery");
+    // require(players.length >= 3, "Not enough players in the lottery");
 
     address payable winner;
 
